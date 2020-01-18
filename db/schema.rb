@@ -10,10 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_10_140255) do
+ActiveRecord::Schema.define(version: 2020_01_10_143759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.date "date"
+    t.time "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "purchases", force: :cascade do |t|
+    t.date "date"
+    t.integer "amount"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_purchases_on_user_id"
+  end
+
+  create_table "tickets", force: :cascade do |t|
+    t.integer "quantity"
+    t.integer "price"
+    t.string "currency"
+    t.bigint "purchase_id"
+    t.bigint "event_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_tickets_on_event_id"
+    t.index ["purchase_id"], name: "index_tickets_on_purchase_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -27,4 +56,7 @@ ActiveRecord::Schema.define(version: 2020_01_10_140255) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "purchases", "users"
+  add_foreign_key "tickets", "events"
+  add_foreign_key "tickets", "purchases"
 end
